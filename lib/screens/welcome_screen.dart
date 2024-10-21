@@ -1,5 +1,6 @@
 // import 'package:cached_network_image/cached_network_image.dart';
 import 'package:app_ksu/app_route.dart';
+import 'package:app_ksu/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -14,7 +15,9 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
-  void _onIntroEnd(context) {
+  Future<void> _onIntroEnd(context) async {
+    await SharedPrefs.setSharedPreference('isFirstTime', false);
+
     Navigator.pushReplacementNamed(context, AppRouter.bottomsNav);
   }
 
@@ -88,7 +91,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               PageViewModel(
                 title: "มหาวิทยาลัยกาฬสินธุ์สู่ความเป็นเลิศ",
                 body:
-                    "มหาวิทยาลัยกาฬสินธุ์ มุ่งสู่ความเป็นเลิศด้านการศึกษา หล่อหลอมบัณฑิตที่มีคุณภาพ พร้อมทักษะที่ตรงกับความต้องการของตลาดงาน",
+                    "มหาวิทยาลัยกาฬสินธุ์ มุ่งสู่ความเป็นเลิศด้านการศึกษา หล่อหลอมบัณฑิตที่มีคุณภาพ พร้อมทักษะที่ตรงกับความต้องการของตลาดแรงงาน",
                 image: Padding(
                   padding: const EdgeInsets.only(top: 50.0),
                   child: _buildImage('ksu2.jpg', true),

@@ -14,8 +14,8 @@ class _BottomsNavState extends State<BottomsNav> {
   int _selectedIndex = 0;
 
   final List<Widget> _widgetOptions = <Widget>[
-    const UniversityScreen(),
     const HomeScreen(),
+    const UniversityScreen(),
     FacultyScreen(),
   ];
 
@@ -34,20 +34,20 @@ class _BottomsNavState extends State<BottomsNav> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance),
-            label: 'มหาวิทยาลัย',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'หน้าหลัก',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.group),
+            icon: Icon(Icons.school),
+            label: 'มหาวิทยาลัย',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
             label: 'คณะ',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.blue[800],
         onTap: _onItemTapped,
       ),
     );

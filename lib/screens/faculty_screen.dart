@@ -3,10 +3,12 @@ import 'package:app_ksu/controllers/faculty_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FacultyScreen extends StatelessWidget {
-  FacultyScreen({super.key});
 
+class FacultyScreen extends StatelessWidget {
+  // Example list of faculties with image paths
   final FacultyController facultyController = Get.put(FacultyController());
+
+  FacultyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

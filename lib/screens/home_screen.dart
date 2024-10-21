@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:app_ksu/app_route.dart';
 import 'package:app_ksu/models/announcement_model.dart';
 import 'package:app_ksu/services/firestore_service.dart';
+import 'package:app_ksu/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -35,7 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.admin_panel_settings),
               onPressed: () {
-                Get.toNamed(AppRouter.adminLogin); // ใช้เส้นทางจาก AppRouter
+                bool isAdminLogin =
+                    SharedPrefs.getSharedPreference('isAdmin') ?? false;
+                if (isAdminLogin) {
+                  // ถ้าเข้าสู่ระบบในฐานะ Admin แล้ว ให้ไปที่หน้า Admin Login
+                  Get.toNamed(AppRouter.adminLogin);
+                } else {
+                  // ถ้าไม่ได้เข้าสู่ระบบในฐานะ Admin ให้ไปที่หน้า Login dashboard
+                  Get.toNamed(AppRouter.adminDashboard);
+                }
               },
             ),
           ],
@@ -51,9 +62,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         Images(imagePaths), // ส่วนของรูปภาพ
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
                         StreamBuilder<List<Announcement>>(
                           stream: firestoreService.getAnnouncements(),
                           builder: (context, snapshot) {
@@ -68,9 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               return const Text('No announcements available');
                             }
 
-                            return Announcements((snapshot.data!..shuffle())
-                                .take(3)
-                                .toList()); // แสดง 3 ประกาศ
+                            final random = Random(DateTime.now().day);
+                            final shuffledAnnouncements = snapshot.data!
+                              ..shuffle(random);
+                            return Announcements(
+                                shuffledAnnouncements.take(3).toList());
                           },
                         ),
                         const SizedBox(height: 20),
@@ -80,39 +93,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-
-            // ปุ่มซ่อนที่มุมล่างขวา
-            // Positioned(
-            //   bottom: 10,
-            //   right: 10,
-            //   child: Opacity(
-            //     opacity: 1, // แสดงปุ่มชั่วคราวเพื่อการทดสอบ
-            //     child: IconButton(
-            //       icon: const Icon(Icons.admin_panel_settings),
-            //       onPressed: () {
-            //         Get.toNamed(
-            //             AppRouter.adminLogin); // ใช้เส้นทางจาก AppRouter
-            //       },
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
     );
   }
 
-  // Widget to display announcements in card style
-  // ignore: non_constant_identifier_names
   Widget Announcements(List<Announcement> announcements) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
           padding: EdgeInsets.only(left: 15, bottom: 10),
-          child: Text(
-            "Announcements",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          child: Row(
+            children: [
+              Icon(Icons.campaign, color: Colors.blue), // ไอคอนที่ต้องการ
+              SizedBox(width: 8), // ระยะห่างระหว่างไอคอนกับข้อความ
+              Text(
+                "Announcements",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ),
         ListView.builder(
@@ -133,24 +134,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      announcement.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    // เพิ่ม Row เพื่อแสดงไอคอนและ title
+                    Row(
+                      children: [
+                        // ไอคอน Full Coverage
+                        const SizedBox(
+                            width: 8), // ระยะห่างระหว่างไอคอนกับข้อความ
+                        Text(
+                          announcement.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 5),
+
+                    // แสดงวันที่
                     Text(
-                      announcement.date,
+                      '${announcement.date.day}-${announcement.date.month}-${announcement.date.year}',
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
                       ),
                     ),
+
                     const SizedBox(height: 10),
+
+                    // แสดง description ของ announcement
                     Text(
-                      announcement.content,
+                      announcement.description,
                       style: const TextStyle(fontSize: 14),
                     ),
                   ],

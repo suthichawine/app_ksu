@@ -3,29 +3,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final collection = 'Announcements';
 
   // ดึงข้อมูลประกาศ
   Stream<List<Announcement>> getAnnouncements() {
-    return _db.collection('announcements')
-        .orderBy('date', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Announcement.fromMap(doc.data(), doc.id))
-            .toList());
+    return _db.collection(collection).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        print('Announcement data: ${doc.data()}');
+        return Announcement.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
   }
 
   // เพิ่มประกาศใหม่
   Future<void> addAnnouncement(Announcement announcement) {
-    return _db.collection('announcements').add(announcement.toMap());
+    return _db.collection(collection).add(announcement.toMap());
   }
 
   // ลบประกาศ
   Future<void> deleteAnnouncement(String id) {
-    return _db.collection('announcements').doc(id).delete();
+    return _db.collection(collection).doc(id).delete();
   }
 
   // แก้ไขประกาศ
   Future<void> updateAnnouncement(String id, Announcement announcement) {
-    return _db.collection('announcements').doc(id).update(announcement.toMap());
+    return _db.collection(collection).doc(id).update(announcement.toMap());
   }
 }

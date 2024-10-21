@@ -5,6 +5,7 @@ import 'package:app_ksu/screens/department_screen.dart';
 import 'package:app_ksu/screens/faculty_screen.dart';
 import 'package:app_ksu/screens/home_screen.dart';
 import 'package:app_ksu/screens/university_screen.dart';
+import 'package:app_ksu/screens/user_screen.dart';
 import 'package:app_ksu/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,13 +15,11 @@ class AppRouter {
   static const String university = 'university';
   static const String faculty = 'faculty';
   static const String department = 'department';
-  static const String course = 'course';
   static const String home = 'home';
   static const String bottomsNav = 'bottomsNav';
-  static const String adminLogin =
-      'admin_login'; // เพิ่มเส้นทางสำหรับ admin login
-  static const String adminDashboard =
-      'admin_dashboard'; // เส้นทางสำหรับ Admin Dashboard
+  static const String adminLogin = 'admin_login'; // เพิ่มเส้นทางสำหรับ admin login
+  static const String adminDashboard = 'admin_dashboard'; // เส้นทางสำหรับ Admin Dashboard
+  static const String userDashboard  = 'user';
 
   // Router Map
   static Map<String, WidgetBuilder> get routes => {
@@ -36,6 +35,8 @@ class AppRouter {
         adminLogin: (context) =>
             const AdminLoginScreen(), // กำหนดเส้นทางสำหรับ admin login
         adminDashboard: (context) =>
-            const AdminDashboardScreen(), // กำหนดเส้นทางสำหรับ Admin Dashboard
+             AdminDashboardScreen(), // กำหนดเส้นทางสำหรับ Admin Dashboard
+        userDashboard: (context) => const UserScreen(),
+
       };
 }

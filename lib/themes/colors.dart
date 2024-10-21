@@ -34,7 +34,7 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         fontSize: 20,
       ),
-      backgroundColor: primary,
+      backgroundColor: Color.fromARGB(255, 103, 163, 219),
       foregroundColor: icons,
       iconTheme: IconThemeData(color: icons),
     ),

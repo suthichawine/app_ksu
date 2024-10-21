@@ -2,6 +2,7 @@ import 'package:app_ksu/models/faculty_model.dart';
 import 'package:app_ksu/services/faculty_service.dart';
 import 'package:get/get.dart';
 
+
 class FacultyController extends GetxController {
   var faculties = <Faculty>[].obs;
   var isLoading = true.obs;
