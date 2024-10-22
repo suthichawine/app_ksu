@@ -1,11 +1,8 @@
 import 'dart:math';
 
-import 'package:app_ksu/app_route.dart';
 import 'package:app_ksu/models/announcement_model.dart';
 import 'package:app_ksu/services/firestore_service.dart';
-import 'package:app_ksu/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,22 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: const Text("ksu"),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.admin_panel_settings),
-              onPressed: () {
-                bool isAdminLogin =
-                    SharedPrefs.getSharedPreference('isAdmin') ?? false;
-                if (isAdminLogin) {
-                  // ถ้าเข้าสู่ระบบในฐานะ Admin แล้ว ให้ไปที่หน้า Admin Login
-                  Get.toNamed(AppRouter.adminLogin);
-                } else {
-                  // ถ้าไม่ได้เข้าสู่ระบบในฐานะ Admin ให้ไปที่หน้า Login dashboard
-                  Get.toNamed(AppRouter.adminDashboard);
-                }
-              },
-            ),
-          ],
         ),
         body: Stack(
           children: [

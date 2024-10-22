@@ -1,8 +1,8 @@
 import 'package:app_ksu/app_route.dart';
 import 'package:app_ksu/controllers/faculty_controller.dart';
+import 'package:app_ksu/models/depart_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 
 class FacultyScreen extends StatelessWidget {
   // Example list of faculties with image paths
@@ -28,13 +28,14 @@ class FacultyScreen extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               child: InkWell(
                 onTap: () {
-                  // print('Card ${faculties[index]['title']} was tapped!');
-                  // final FacultyService facultyService = FacultyService();
-                  // facultyService.create(faculties[index]["title"].toString());
                   Navigator.pushNamed(
                     context,
                     AppRouter.department,
-                    arguments: facultyController.faculties[index].id,
+                    arguments: DepartmentArguments(
+                      id: facultyController.faculties[index].id,
+                      departmentName:
+                          facultyController.faculties[index].faculty_name,
+                    ),
                   );
                 },
                 child: Card(

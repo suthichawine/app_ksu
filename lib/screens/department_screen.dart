@@ -1,15 +1,19 @@
-import 'package:app_ksu/app_route.dart';
 import 'package:app_ksu/screens/plo_screen.dart';
-import 'package:app_ksu/utils/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class DepartmentScreen extends StatefulWidget {
   final String message;
+  final String departmentName;
 
-  DepartmentScreen({Key? key, required this.message}) : super(key: key);
+  const DepartmentScreen({
+    super.key,
+    required this.message,
+    required this.departmentName,
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _DepartmentScreenState createState() => _DepartmentScreenState();
 }
 
@@ -29,11 +33,13 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
     }
   }
 
+  var iconName = 'devices';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("สาขาวิชา"),
+        title: Text(widget.departmentName),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -65,9 +71,8 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                 var facultyId =
                     department['faculty_id'] ?? 'Unknown Faculty ID';
 
-                // พิมพ์ค่าเพื่อช่วยในการดีบัก
-                print(
-                    "Department Name: $departmentName, Faculty ID: $facultyId");
+                // พิมพ์ชื่อ departmentName ออกมาเพื่อตรวจสอบ
+                print('Department Name: $departmentName');
 
                 return FutureBuilder<String>(
                   future: getFacultyName(facultyId),
@@ -78,39 +83,38 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       String facultyName = snapshot.data!;
-                      // เพิ่มการพิมพ์เพื่อช่วยในการดีบัก
-                      print("Faculty Name: $facultyName");
 
                       return Card(
                         margin: EdgeInsets.all(10.0),
                         elevation: 5,
                         child: Container(
-                          color: (index.isOdd)
-                              ? _getFacultyColor(facultyName)?.withOpacity(
-                                  0.8) // สีตาม faculty + ความทึบเล็กน้อย
-                              : _getFacultyColor(
-                                  facultyName), // สีตาม faculty โดยไม่มีการเปลี่ยนแปลง
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: _getFacultyColor(facultyName) ??
+                                  Colors.grey[300]!,
+                              width: 1.0, // ความหนาของเส้นขอบ
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(10.0), // ปรับขอบให้โค้งมน
+                          ),
                           child: ListTile(
-                              title: Text(departmentName),
-                              trailing: Icon(Icons.start_outlined),
-                              onTap: () async {
-                                bool isAdminLogin =
-                                    SharedPrefs.getSharedPreference(
-                                            'isAdmin') ??
-                                        false;
-                                if (isAdminLogin) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PLOScreen(
-                                          departmentId: department.id),
-                                    ),
-                                  );
-                                } else {
-                                  // Navigator.pushNamed(
-                                  //     context, AppRouter.);
-                                }
-                              }),
+                            leading: Icon(Icons.devices, // แสดงไอคอนตามสาขา
+                              color: Colors.amber,
+                            ),
+                            title: Text(departmentName),
+                            trailing: Icon(Icons.arrow_forward_ios),
+                            onTap: () {
+                              // พาไปที่หน้า PLOScreen เมื่อกดไอคอน
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PLOScreen(
+                                    departmentId: department.id,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       );
                     } else {
@@ -128,6 +132,26 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
     );
   }
 
+  // ฟังก์ชันสำหรับเลือกไอคอนตามชื่อสาขา
+  IconData _getDepartmentIcon(String departmentName) {
+    switch (departmentName) {
+      case 'สาขาวิชาคอมพิวเตอร์ธุรกิจ':
+        return Icons.computer; // ใช้ไอคอนคอมพิวเตอร์
+      case 'สาขาวิชาเคมีภัณฑ์และจุลชีววิทยาอุตสาหกรรม':
+        return Icons.science; // ใช้ไอคอนวิทยาศาสตร์
+      case 'สาขาวิชาวิศวกรรมอุตสาหการ':
+        return Icons.engineering; // ใช้ไอคอนวิศวกรรม
+      case 'สาขาวิชานวัตกรรมธุรกิจการค้าสมัยใหม่':
+        return Icons.business; // ใช้ไอคอนธุรกิจ
+      case 'สาขาวิชาเอกคอมพิวเตอร์':
+        return Icons.laptop; // ใช้ไอคอนแล็ปท็อป
+      // เพิ่มเคสอื่นๆ สำหรับสาขาวิชาอื่นๆ ที่คุณมี
+      default:
+        return Icons.account_balance; // ใช้ไอคอนทั่วไปถ้าไม่พบ
+    }
+  }
+
+  // ฟังก์ชันสำหรับเลือกสีตามคณะ
   Color? _getFacultyColor(String facultyId) {
     switch (facultyId) {
       case 'คณะวิศวกรรมศาสตร์และเทคโนโลยีอุตสาหกรรม':

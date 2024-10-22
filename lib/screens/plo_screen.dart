@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 class PLOScreen extends StatefulWidget {
   final String departmentId;
 
-  PLOScreen({Key? key, required this.departmentId}) : super(key: key);
+  const PLOScreen({Key? key, required this.departmentId}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _PLOScreenState createState() => _PLOScreenState();
 }
 
 class _PLOScreenState extends State<PLOScreen> {
-  final TextEditingController _controllerPLO = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,28 +21,8 @@ class _PLOScreenState extends State<PLOScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            // child: TextField(
-            //   controller: _controllerPLO,
-            //   decoration: InputDecoration(labelText: 'Enter PLO'),
-            // ),
+            padding: const EdgeInsets.all(5.0),
           ),
-          // ElevatedButton(
-          //   onPressed: () {
-          //     if (_controllerPLO.text.isNotEmpty) {
-          //       FirebaseFirestore.instance
-          //           .collection('department')
-          //           .doc(widget.departmentId)
-          //           .update({
-          //         'plos': FieldValue.arrayUnion([
-          //           {'PLO': _controllerPLO.text}
-          //         ]),
-          //       });
-          //       _controllerPLO.clear();
-          //     }
-          //   },
-          //   // child: Text('Add PLO'),
-          // ),
           Expanded(
             child: StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
@@ -80,10 +59,28 @@ class _PLOScreenState extends State<PLOScreen> {
                       var ploText =
                           plo['PLO'] ?? 'No PLO description available';
 
-                      return ListTile(
-                        title: Text(ploText),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0), // เพิ่ม padding ในแกน Y
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 5,
+                          child: ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal:
+                                    16.0), // ปรับ padding ภายใน ListTile
+                            title: Text(
+                              ploText,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            leading: Icon(Icons.school, color: Colors.blue),
+                          ),
                         ),
                       );
                     },
@@ -97,64 +94,5 @@ class _PLOScreenState extends State<PLOScreen> {
         ],
       ),
     );
-  }
-
-  void _deletePLO(String ploText) {
-    FirebaseFirestore.instance
-        .collection('department')
-        .doc(widget.departmentId)
-        .update({
-      'plos': FieldValue.arrayRemove([
-        {'PLO': ploText}
-      ]),
-    });
-  }
-
-  void _showEditDialog(String oldPLO, int index) {
-    TextEditingController _editController = TextEditingController(text: oldPLO);
-
-    // showDialog(
-    // context: context,
-    // builder: (context) {
-    // return AlertDialog(
-    //   title: Text('Edit PLO'),
-    //   content: TextField(
-    //     controller: _editController,
-    //     decoration: InputDecoration(labelText: 'PLO'),
-    //   ),
-    //   actions: [
-    //     ElevatedButton(
-    //       onPressed: () {
-    //         Navigator.of(context).pop();
-    //         _updatePLO(oldPLO, _editController.text);
-    //       },
-    //       child: Text('Update'),
-    //     ),
-    //   ],
-    // );
-    // },
-    // );
-  }
-
-  void _updatePLO(String oldPLO, String newPLO) {
-    if (newPLO.isNotEmpty) {
-      FirebaseFirestore.instance
-          .collection('department')
-          .doc(widget.departmentId)
-          .update({
-        'plos': FieldValue.arrayRemove([
-          {'PLO': oldPLO}
-        ]),
-      });
-
-      FirebaseFirestore.instance
-          .collection('department')
-          .doc(widget.departmentId)
-          .update({
-        'plos': FieldValue.arrayUnion([
-          {'PLO': newPLO}
-        ]),
-      });
-    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:app_ksu/components/buttoms_nav.dart';
+import 'package:app_ksu/models/depart_model.dart';
 import 'package:app_ksu/screens/admin_dashboard_screen.dart';
 import 'package:app_ksu/screens/admin_login_screen.dart';
 import 'package:app_ksu/screens/department_screen.dart';
@@ -17,9 +18,11 @@ class AppRouter {
   static const String department = 'department';
   static const String home = 'home';
   static const String bottomsNav = 'bottomsNav';
-  static const String adminLogin = 'admin_login'; // เพิ่มเส้นทางสำหรับ admin login
-  static const String adminDashboard = 'admin_dashboard'; // เส้นทางสำหรับ Admin Dashboard
-  static const String userDashboard  = 'user';
+  static const String adminLogin =
+      'admin_login'; // เพิ่มเส้นทางสำหรับ admin login
+  static const String adminDashboard =
+      'admin_dashboard'; // เส้นทางสำหรับ Admin Dashboard
+  static const String userDashboard = 'user';
 
   // Router Map
   static Map<String, WidgetBuilder> get routes => {
@@ -29,14 +32,17 @@ class AppRouter {
         bottomsNav: (context) => const BottomsNav(),
         faculty: (context) => FacultyScreen(),
         department: (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as String;
-          return DepartmentScreen(message: args);
+          final args =
+              ModalRoute.of(context)!.settings.arguments as DepartmentArguments;
+          return DepartmentScreen(
+            message: args.id,
+            departmentName: args.departmentName,
+          );
         },
         adminLogin: (context) =>
             const AdminLoginScreen(), // กำหนดเส้นทางสำหรับ admin login
         adminDashboard: (context) =>
-             AdminDashboardScreen(), // กำหนดเส้นทางสำหรับ Admin Dashboard
+            AdminDashboardScreen(), // กำหนดเส้นทางสำหรับ Admin Dashboard
         userDashboard: (context) => const UserScreen(),
-
       };
 }
