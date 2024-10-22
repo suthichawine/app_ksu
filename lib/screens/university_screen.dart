@@ -40,7 +40,6 @@ class UniversityScreen extends StatelessWidget {
             children: <Widget>[
               const Center(
                   // จัดกึ่งกลางให้ข้อความ
-
                   // child: Text(
                   //   "มหาวิทยาลัยกาฬสินธุ์",
                   //   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -228,20 +227,29 @@ class UniversityScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
 
-                    const Text(
-                      'ค่านิยม',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.favorite,
+                          color: Colors.blue,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'ค่านิยม',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 5), // ลดช่องว่างระหว่าง Text กับภาพ
                     Image.asset(
                       'assets/images/give.png', // เปลี่ยนพาธภาพเป็นพาธที่ถูกต้อง
                       width: 400, // กำหนดความกว้างของภาพ
                       height: 100, // กำหนดความสูงของภาพ
-                      fit: BoxFit
-                          .cover, // ใช้ BoxFit.cover เพื่อให้ภาพเต็มพื้นที่
+                      fit: BoxFit.cover, // ใช้ BoxFit.cover เพื่อให้ภาพเต็มพื้นที่
                     ),
                     const SizedBox(height: 5), // ลดช่องว่างระหว่าง Text กับภาพ
                     const Row(
@@ -272,7 +280,7 @@ class UniversityScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
-                          Icons.handshake,
+                          Icons.person_4_sharp,
                           color: Colors.blue,
                         ),
                         SizedBox(width: 10),
@@ -301,3 +309,4 @@ class UniversityScreen extends StatelessWidget {
     );
   }
 }
+                       
