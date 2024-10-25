@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:app_ksu/models/announcement_model.dart';
 import 'package:app_ksu/services/firestore_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // สำหรับแปลง DateTime เป็นรูปแบบที่เข้าใจง่าย
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Stack(
           children: [
-            // เนื้อหา HomeScreen ทั้งหมด
             Scaffold(
               body: SafeArea(
                 child: SingleChildScrollView(
@@ -49,22 +49,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         StreamBuilder<List<Announcement>>(
                           stream: firestoreService.getAnnouncements(),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
                             }
                             if (snapshot.hasError) {
-                              return const Text('Error loading announcements');
+                              return const Center(child: Text('Error loading announcements'));
                             }
                             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Text('No announcements available');
+                              return const Center(child: Text('No announcements available'));
                             }
 
                             final random = Random(DateTime.now().day);
-                            final shuffledAnnouncements = snapshot.data!
-                              ..shuffle(random);
+                            final shuffledAnnouncements = snapshot.data!..shuffle(random);
+
                             return Announcements(
-                                shuffledAnnouncements.take(3).toList());
+                              shuffledAnnouncements.take(3).toList(), // แสดงแค่ 3 ประกาศ
+                            );
                           },
                         ),
                         const SizedBox(height: 20),
@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.only(left: 15, bottom: 10),
           child: Row(
             children: [
-              Icon(Icons.campaign, color: Colors.blue), // ไอคอนที่ต้องการ
+              Icon(Icons.campaign, color: Colors.blue), // ไอคอน
               SizedBox(width: 8), // ระยะห่างระหว่างไอคอนกับข้อความ
               Text(
                 "Announcements",
@@ -99,11 +99,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap:
-              true, // Allows ListView to be inside SingleChildScrollView
+          shrinkWrap: true, // Allows ListView to be inside SingleChildScrollView
           itemCount: announcements.length,
           itemBuilder: (context, index) {
             final announcement = announcements[index];
+
+            // Format the date in a readable way
+            final String formattedDate =
+                DateFormat('dd-MM-yyyy HH:mm').format(announcement.createdAt);
+
             return Card(
               margin: const EdgeInsets.symmetric(vertical: 10),
               elevation: 3,
@@ -115,12 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // เพิ่ม Row เพื่อแสดงไอคอนและ title
                     Row(
                       children: [
-                        // ไอคอน Full Coverage
-                        const SizedBox(
-                            width: 8), // ระยะห่างระหว่างไอคอนกับข้อความ
+                        const Icon(Icons.announcement_outlined, size: 24, color: Colors.blue),
+                        const SizedBox(width: 8),
                         Text(
                           announcement.title,
                           style: const TextStyle(
@@ -131,21 +133,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 5),
-
-                    // แสดงวันที่
                     Text(
-                      '${announcement.date.day}-${announcement.date.month}-${announcement.date.year}',
+                      formattedDate,
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
-                    // แสดง description ของ announcement
                     Text(
-                      announcement.description,
+                      announcement.content,
                       style: const TextStyle(fontSize: 14),
                     ),
                   ],
@@ -158,8 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Widget to display images in horizontal scroll view
-  // ignore: non_constant_identifier_names
   Widget Images(List<String> imagePaths) {
     return SizedBox(
       child: SingleChildScrollView(

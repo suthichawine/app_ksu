@@ -1,31 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Announcement {
+  String id;
   String title;
-  String description;
-  DateTime date;
+  String content;
+  DateTime createdAt;
 
   Announcement({
+    required this.id,
     required this.title,
-    required this.description,
-    required this.date,
+    required this.content,
+    required this.createdAt,
   });
 
-  // แปลงข้อมูลจาก Map เป็น Announcement object
-  factory Announcement.fromMap(Map<String, dynamic> data) {
-    return Announcement(
-      title: data['title'],
-      description: data['description'],
-      date: (data['date'] as Timestamp).toDate(), // Firestore stores date as Timestamp
-    );
-  }
+  factory Announcement.fromJson(Map<String, dynamic> json) => Announcement(
+        id: json["id"] ?? '', // ถ้า id เป็น null ให้กำหนดค่าเป็น empty string
+        title: json["title"] ??
+            'Untitled', // ถ้า title เป็น null ให้ใช้ 'Untitled'
+        content: json["content"] ??
+            'No content', // ถ้า content เป็น null ให้ใช้ 'No content'
+        // ตรวจสอบว่ามาจาก Firestore (Timestamp) หรือจาก String และแปลงให้เป็น DateTime
+        createdAt: (json["createdAt"] as Timestamp).toDate(),
+      );
 
-  // แปลง Announcement object เป็น Map เพื่อบันทึกใน Firestore
-  Map<String, dynamic> toMap() {
-    return {
-      'title': title,
-      'description': description,
-      'date': date,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "title": title,
+        "content": content,
+        "createdAt": Timestamp.fromDate(
+            createdAt), // แปลงกลับเป็น Firestore Timestamp เมื่อบันทึกข้อมูล
+      };
 }

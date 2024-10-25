@@ -3,30 +3,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final collection = 'Announcements';
+  final String collection = 'announcements';
 
-  // ดึงข้อมูลประกาศ
+  // ฟังก์ชันดึงข้อมูลทั้งหมดจาก Firestore
   Stream<List<Announcement>> getAnnouncements() {
-    return _db.collection(collection).snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        print('Announcement data: ${doc.data()}');
-        return Announcement.fromMap(doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
+    return _db
+        .collection(collection)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) =>
+                Announcement.fromJson(doc.data() as Map<String, dynamic>))
+            .toList());
   }
 
-  // เพิ่มประกาศใหม่
-  Future<void> addAnnouncement(Announcement announcement) {
-    return _db.collection(collection).add(announcement.toMap());
-  }
-
-  // ลบประกาศ
-  Future<void> deleteAnnouncement(String id) {
-    return _db.collection(collection).doc(id).delete();
-  }
-
-  // แก้ไขประกาศ
-  Future<void> updateAnnouncement(String id, Announcement announcement) {
-    return _db.collection(collection).doc(id).update(announcement.toMap());
+  // ฟังก์ชันดึงข้อมูลเพียงครั้งเดียว (ไม่ใช้ Stream)
+  Future<List<Announcement>> getAnnouncementsOnce() async {
+    var snapshot = await _db
+        .collection(collection)
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snapshot.docs
+        .map((doc) => Announcement.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
   }
 }

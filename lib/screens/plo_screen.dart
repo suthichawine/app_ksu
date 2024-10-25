@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PLOScreen extends StatefulWidget {
   final String departmentId;
@@ -7,7 +7,6 @@ class PLOScreen extends StatefulWidget {
   const PLOScreen({Key? key, required this.departmentId}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _PLOScreenState createState() => _PLOScreenState();
 }
 
@@ -38,55 +37,48 @@ class _PLOScreenState extends State<PLOScreen> {
                 }
 
                 if (snapshot.hasData && snapshot.data != null) {
-                  // แปลง document.data() ให้เป็น Map<String, dynamic>
-                  var documentData =
-                      snapshot.data!.data() as Map<String, dynamic>?;
-
-                  // รับข้อมูล plos ถ้ามี ถ้าไม่มีให้เป็น null
+                  var documentData = snapshot.data!.data() as Map<String, dynamic>?;
                   List<dynamic>? plos = documentData?['plos'];
+                  String? assetImagePath = documentData?['imagePath']; // ดึง path ของ asset
 
-                  // ถ้าไม่มีข้อมูลให้แสดงหน้าว่าง
-                  if (plos == null || plos.isEmpty) {
-                    return SizedBox
-                        .shrink(); // หน้าจอว่างเปล่า (ไม่แสดงอะไรเลย)
-                  }
+                  return Column(
+                    children: [
+                      if (assetImagePath != null)
+                        Image.asset("assets/images/coms.jpeg"), // แสดงรูปภาพจาก asset
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: plos?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            var plo = plos![index] as Map<String, dynamic>;
+                            var ploText = plo['PLO'] ?? 'No PLO description available';
 
-                  // แสดงผล PLOs ถ้ามีข้อมูล
-                  return ListView.builder(
-                    itemCount: plos.length,
-                    itemBuilder: (context, index) {
-                      var plo = plos[index] as Map<String, dynamic>;
-                      var ploText =
-                          plo['PLO'] ?? 'No PLO description available';
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0), // เพิ่ม padding ในแกน Y
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          elevation: 5,
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 10.0,
-                                horizontal:
-                                    16.0), // ปรับ padding ภายใน ListTile
-                            title: Text(
-                              ploText,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                elevation: 5,
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                                  title: Text(
+                                    ploText,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  leading: Icon(Icons.school, color: Colors.blue),
+                                ),
                               ),
-                            ),
-                            leading: Icon(Icons.school, color: Colors.blue),
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   );
                 } else {
-                  return SizedBox.shrink(); // หน้าจอว่างเปล่า (ไม่แสดงอะไรเลย)
+                  return SizedBox.shrink();
                 }
               },
             ),
